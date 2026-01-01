@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AC Material Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AC Installer Dashboard</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <div class="container">
     <h1>AC Material Calculator</h1>
 
     <div id="rooms"></div>
 
-    <button class="secondary" onclick="addRoom()">➕ Add Room</button>
-    <button class="primary" onclick="calculate()">Calculate Project</button>
+    <div class="buttons">
+      <button class="secondary" id="addRoomBtn">➕ Add Room</button>
+      <button class="primary" id="calculateBtn">Calculate Project</button>
+    </div>
 
     <div id="summary" class="hidden"></div>
     <div id="results"></div>
