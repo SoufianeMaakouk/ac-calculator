@@ -3,40 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <title>AC Material Calculator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="container">
+    <h1>AC Installation Planner</h1>
 
-<div class="container">
-  <div class="card">
-    <h1>AC Material Calculator</h1>
-    <p class="subtitle">Professional HVAC material estimation</p>
+    <div id="rooms"></div>
+    <button onclick="addRoom()">➕ Add Room</button>
+    <button class="primary" onclick="calculate()">Calculate Project</button>
 
-    <div class="form-group">
-      <label>Number of Rooms</label>
-      <input id="rooms" type="number" placeholder="e.g. 2" />
-    </div>
-
-    <div class="form-group">
-      <label>Total Area (m²)</label>
-      <input id="area" type="number" placeholder="e.g. 40" />
-    </div>
-
-    <div class="form-group">
-      <label>Distance to Outdoor Unit (m)</label>
-      <input id="distance" type="number" placeholder="Default: 5" />
-    </div>
-
-    <button onclick="calculate()">Calculate</button>
-
-    <div id="loader" class="loader hidden"></div>
-    <div id="error" class="error hidden"></div>
-
-    <div id="result" class="results hidden"></div>
+    <pre id="result"></pre>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
