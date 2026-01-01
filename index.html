@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>AC Material Calculator</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <title>AC Material Calculator</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="container">
-<h1>AC Installation Planner</h1>
 
+  <div class="container">
+    <h1>AC Material Calculator</h1>
 
-<div id="rooms"></div>
-<button id="addRoomBtn">➕ Add Room</button>
-<button id="calculateBtn" class="primary">Calculate Project</button>
+    <div id="rooms"></div>
 
+    <button class="secondary" onclick="addRoom()">➕ Add Room</button>
+    <button class="primary" onclick="calculate()">Calculate Project</button>
 
-<pre id="result"></pre>
-</div>
+    <div id="summary" class="hidden"></div>
+    <div id="results"></div>
+  </div>
 
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
