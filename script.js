@@ -54,6 +54,32 @@ const LANG = {
     drainPipe: "Tuyau d’évacuation",
     cable: "Câble",
     alertAddRoom: "Veuillez ajouter au moins une pièce avec une surface"
+  },
+  ar: {
+    title: "حاسبة مواد التكييف",
+    addRoom: "➕ إضافة غرفة",
+    calculate: "حساب المشروع",
+    area: "المساحة (م²)",
+    distance: "المسافة للوحدة الخارجية (م)",
+    roomType: "نوع الغرفة",
+    sunExposure: "تعرض الشمس",
+    roomTypes: [
+      { value: "bedroom", label: "غرفة نوم" },
+      { value: "living", label: "غرفة معيشة" },
+      { value: "kitchen", label: "مطبخ" }
+    ],
+    sunLevels: [
+      { value: "low", label: "منخفض" },
+      { value: "medium", label: "متوسط" },
+      { value: "high", label: "مرتفع" }
+    ],
+    summary: "ملخص المشروع",
+    totalBTU: "إجمالي BTU المطلوب",
+    system: "النظام الموصى به",
+    copperPipe: "أنابيب نحاسية",
+    drainPipe: "أنابيب تصريف",
+    cable: "كابل",
+    alertAddRoom: "يرجى إضافة غرفة واحدة على الأقل مع المساحة"
   }
 };
 
@@ -64,8 +90,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("languageSelect").addEventListener("change", (e) => {
     currentLang = e.target.value;
     updateUIText();
+    toggleRTL();
   });
 });
+
+// ===== RTL TOGGLE =====
+function toggleRTL() {
+  if (currentLang === "ar") {
+    document.body.classList.add("rtl");
+  } else {
+    document.body.classList.remove("rtl");
+  }
+}
 
 // ===== UPDATE UI TEXT FOR LANGUAGE =====
 function updateUIText() {
@@ -81,7 +117,6 @@ function updateUIText() {
     if (labels[2]) labels[2].innerText = t.roomType;
     if (labels[3]) labels[3].innerText = t.sunExposure;
 
-    // Update dropdown options
     const typeSelect = card.querySelector(".type");
     const sunSelect = card.querySelector(".sun");
 
@@ -175,11 +210,11 @@ function renderResults(data) {
   `;
 
   // ROOM DETAIL CARDS
-  data.rooms.forEach(r => {
+  data.rooms.forEach((r, idx) => {
     const card = document.createElement("div");
     card.className = "result-card";
     card.innerHTML = `
-      <h3>Room ${r.room}</h3>
+      <h3>Room ${idx + 1}</h3>
       <p><strong>BTU:</strong> ${r.btu}</p>
       <p>
         Pipe Size: ${r.materials.pipeSize}<br>
