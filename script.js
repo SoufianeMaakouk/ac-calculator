@@ -1,90 +1,91 @@
-let rooms = [];
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("addRoomBtn").addEventListener("click", addRoom);
-  document.getElementById("calculateBtn").addEventListener("click", calculate);
-});
+let roomCount = 0;
 
 function addRoom() {
-  const id = rooms.length;
+  roomCount++;
 
-  rooms.push({
-    area: 0,
-    ceilingHeight: 2.6,
-    type: "bedroom",
-    sun: "low",
-    distance: 0
-  });
+  const room = document.createElement("div");
+  room.className = "room-card";
+  room.innerHTML = `
+    <h3>Room ${roomCount}</h3>
 
-  const div = document.createElement("div");
-  div.className = "room";
+    <input placeholder="Area (m²)" type="number" class="area" />
+    <input placeholder="Distance to outdoor unit (m)" type="number" class="distance" />
 
-  div.innerHTML = `
-    <h3>Room ${id + 1}</h3>
-
-    <label>Area (m²)</label>
-    <input type="number" min="1" oninput="rooms[${id}].area = +this.value" />
-
-    <label>Ceiling Height</label>
-    <input type="number" step="0.1" value="2.6"
-      oninput="rooms[${id}].ceilingHeight = +this.value" />
-
-    <label>Room Type</label>
-    <select oninput="rooms[${id}].type = this.value">
+    <select class="type">
       <option value="bedroom">Bedroom</option>
-      <option value="living">Living</option>
+      <option value="living">Living Room</option>
       <option value="kitchen">Kitchen</option>
     </select>
 
-    <label>Sun Exposure</label>
-    <select oninput="rooms[${id}].sun = this.value">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
+    <select class="sun">
+      <option value="low">Low Sun</option>
+      <option value="medium">Medium Sun</option>
+      <option value="high">High Sun</option>
     </select>
-
-    <label>Pipe Distance (m)</label>
-    <input type="number" min="0" oninput="rooms[${id}].distance = +this.value" />
   `;
 
-  document.getElementById("rooms").appendChild(div);
+  document.getElementById("rooms").appendChild(room);
 }
 
 async function calculate() {
-  // 🔒 VALIDATION
-  const validRooms = rooms.filter(r => r.area > 0);
+  const rooms = [];
 
-  if (validRooms.length === 0) {
-    alert("Please add at least one room with area");
-    return;
-  }
+  document.querySelectorAll(".room-card").forEach(card => {
+    rooms.push({
+      area: card.querySelector(".area").value,
+      distance: card.querySelector(".distance").value,
+      type: card.querySelector(".type").value,
+      sun: card.querySelector(".sun").value,
+      ceilingHeight: 2.6
+    });
+  });
 
-  document.getElementById("result").textContent = "Calculating...";
+  const res = await fetch("https://ac-calculator-backend.onrender.com/project/calculate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      projectName: "AC Project",
+      rooms
+    })
+  });
 
-  try {
-    const res = await fetch(
-      "https://ac-calculator-backend.onrender.com/project/calculate",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectName: "My Project",
-          rooms: validRooms
-        })
-      }
-    );
+  const data = await res.json();
+  renderResults(data);
+}
 
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text);
-    }
+function renderResults(data) {
+  const results = document.getElementById("results");
+  const summary = document.getElementById("summary");
 
-    const data = await res.json();
+  results.innerHTML = "";
+  summary.classList.remove("hidden");
 
-    document.getElementById("result").textContent =
-      JSON.stringify(data, null, 2);
-  } catch (err) {
-    document.getElementById("result").textContent =
-      "ERROR:\n" + err.message;
-  }
+  summary.innerHTML = `
+    <div class="summary-card">
+      <h2>Project Summary</h2>
+      <p>Total BTU Required: <span class="badge">${data.totalBTU} BTU</span></p>
+      <p><strong>Recommended System:</strong> ${data.systemRecommendation}</p>
+      <p>
+        Copper Pipe: ${data.totalMaterials.copperPipe_m} m |
+        Drain Pipe: ${data.totalMaterials.drainPipe_m} m |
+        Cable: ${data.totalMaterials.cable_m} m
+      </p>
+    </div>
+  `;
+
+  data.rooms.forEach(r => {
+    const card = document.createElement("div");
+    card.className = "result-card";
+    card.innerHTML = `
+      <h3>Room ${r.room}</h3>
+      <p><strong>BTU:</strong> ${r.btu}</p>
+      <p>
+        Pipe Size: ${r.materials.pipeSize}<br>
+        Copper: ${r.materials.copperPipe_m} m<br>
+        Drain: ${r.materials.drainPipe_m} m<br>
+        Cable: ${r.materials.cable_m} m
+      </p>
+    `;
+    results.appendChild(card);
+  });
 }
