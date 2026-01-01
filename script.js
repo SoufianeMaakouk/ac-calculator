@@ -1,5 +1,12 @@
 let roomCount = 0;
 
+// ===== EVENT LISTENERS =====
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("addRoomBtn").addEventListener("click", addRoom);
+  document.getElementById("calculateBtn").addEventListener("click", calculate);
+});
+
+// ===== ADD ROOM =====
 function addRoom() {
   roomCount++;
 
@@ -8,25 +15,31 @@ function addRoom() {
   room.innerHTML = `
     <h3>Room ${roomCount}</h3>
 
-    <input placeholder="Area (m²)" type="number" class="area" />
-    <input placeholder="Distance to outdoor unit (m)" type="number" class="distance" />
+    <label>Area (m²)</label>
+    <input type="number" class="area" placeholder="20" />
 
+    <label>Distance to outdoor unit (m)</label>
+    <input type="number" class="distance" placeholder="5" />
+
+    <label>Room Type</label>
     <select class="type">
       <option value="bedroom">Bedroom</option>
       <option value="living">Living Room</option>
       <option value="kitchen">Kitchen</option>
     </select>
 
+    <label>Sun Exposure</label>
     <select class="sun">
-      <option value="low">Low Sun</option>
-      <option value="medium">Medium Sun</option>
-      <option value="high">High Sun</option>
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
     </select>
   `;
 
   document.getElementById("rooms").appendChild(room);
 }
 
+// ===== CALCULATE PROJECT =====
 async function calculate() {
   const rooms = [];
 
@@ -40,26 +53,32 @@ async function calculate() {
     });
   });
 
+  const validRooms = rooms.filter(r => r.area > 0);
+  if (validRooms.length === 0) {
+    alert("Please add at least one room with area");
+    return;
+  }
+
   const res = await fetch("https://ac-calculator-backend.onrender.com/project/calculate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      projectName: "AC Project",
-      rooms
-    })
+    body: JSON.stringify({ projectName: "AC Project", rooms: validRooms })
   });
 
   const data = await res.json();
   renderResults(data);
 }
 
+// ===== RENDER DASHBOARD =====
 function renderResults(data) {
   const results = document.getElementById("results");
   const summary = document.getElementById("summary");
 
+  // Clear old results
   results.innerHTML = "";
   summary.classList.remove("hidden");
 
+  // ===== SUMMARY CARD =====
   summary.innerHTML = `
     <div class="summary-card">
       <h2>Project Summary</h2>
@@ -73,6 +92,7 @@ function renderResults(data) {
     </div>
   `;
 
+  // ===== ROOM DETAIL CARDS =====
   data.rooms.forEach(r => {
     const card = document.createElement("div");
     card.className = "result-card";
