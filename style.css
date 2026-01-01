@@ -1,3 +1,4 @@
+/* ===== GENERAL ===== */
 body {
   font-family: Arial, sans-serif;
   background: #f4f6f8;
@@ -16,8 +17,10 @@ body {
 
 h1 {
   text-align: center;
+  margin-bottom: 20px;
 }
 
+/* ===== ROOM CARDS ===== */
 .room-card, .result-card, .summary-card {
   background: #f9fafb;
   border-radius: 8px;
@@ -26,7 +29,7 @@ h1 {
   border-left: 5px solid #2563eb;
 }
 
-.room-card h3 {
+.room-card h3, .result-card h3 {
   margin-top: 0;
 }
 
@@ -34,6 +37,14 @@ input, select {
   width: 100%;
   padding: 8px;
   margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 
 button {
@@ -46,13 +57,15 @@ button {
 .primary {
   background: #2563eb;
   color: white;
+  flex: 1;
 }
 
 .secondary {
   background: #e5e7eb;
-  margin-right: 10px;
+  flex: 1;
 }
 
+/* ===== BADGES ===== */
 .badge {
   display: inline-block;
   background: #16a34a;
@@ -62,6 +75,18 @@ button {
   font-weight: bold;
 }
 
+/* ===== HIDE ELEMENTS ===== */
 .hidden {
   display: none;
+}
+
+/* ===== MOBILE-FIRST RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .buttons {
+    flex-direction: column;
+  }
+  .room-card, .result-card, .summary-card {
+    border-left-width: 3px;
+    padding: 12px;
+  }
 }
