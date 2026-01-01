@@ -1,117 +1,145 @@
-/* ===== GENERAL ===== */
+/* ===== Global Styles ===== */
 body {
   font-family: Arial, sans-serif;
   background: #f4f6f8;
   margin: 0;
-  padding: 20px;
+  padding: 0;
+  line-height: 1.4;
 }
 
 .container {
   max-width: 900px;
   margin: auto;
-  background: #fff;
-  padding: 25px;
+  background: white;
+  padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
+/* ===== Language Selector ===== */
 .language-selector {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .language-selector select {
   padding: 5px 10px;
+  border-radius: 5px;
 }
 
-/* ===== ROOM CARDS ===== */
-.room-card, .result-card, .summary-card {
-  background: #f9fafb;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-left: 5px solid #2563eb;
+/* ===== Headings ===== */
+h1, h2, h3, h4 {
+  margin: 10px 0;
+  color: #333;
 }
 
-.room-card h3, .result-card h3 {
-  margin-top: 0;
+h1 {
+  text-align: center;
 }
 
-input, select {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 8px;
-  box-sizing: border-box;
-}
-
-.buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  flex-wrap: wrap;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.primary {
-  background: #2563eb;
-  color: white;
-  flex: 1;
-}
-
-.secondary {
-  background: #e5e7eb;
-  flex: 1;
-}
-
-/* ===== BADGES ===== */
-.badge {
-  display: inline-block;
-  background: #16a34a;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-weight: bold;
-}
-
-/* ===== HIDE ELEMENTS ===== */
+/* ===== Hidden Utility ===== */
 .hidden {
   display: none;
 }
 
-/* ===== RTL SUPPORT ===== */
-.rtl {
-  direction: rtl;
-  text-align: right;
+/* ===== Forms ===== */
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
-.rtl .room-card, .rtl .result-card, .rtl .summary-card {
-  border-left: none;
-  border-right: 5px solid #2563eb;
+input:focus, select:focus {
+  outline: none;
+  border-color: #007bff;
 }
 
-/* ===== MOBILE-FIRST RESPONSIVE ===== */
+/* ===== Buttons ===== */
+button {
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.primary {
+  background: #007bff;
+  color: white;
+  border: none;
+}
+
+.secondary {
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+/* ===== Room Cards ===== */
+.room, .card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.room h4, .card h4 {
+  margin-top: 0;
+}
+
+/* ===== Buttons Container ===== */
+.buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+/* ===== Dashboard Sections ===== */
+#summary {
+  background: #e0f7fa;
+  border-left: 5px solid #007bff;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+}
+
+#results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+/* ===== Saved Projects ===== */
+#savedProjects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+/* ===== Responsive ===== */
 @media (max-width: 600px) {
   .buttons {
     flex-direction: column;
   }
-  .room-card, .result-card, .summary-card {
-    border-left-width: 3px;
-    padding: 12px;
-  }
-  .rtl .room-card, .rtl .result-card, .rtl .summary-card {
-    border-left: none;
-    border-right-width: 3px;
-  }
+}
+
+/* ===== RTL Support ===== */
+body[dir="rtl"] {
+  text-align: right;
+}
+
+body[dir="rtl"] .language-selector {
+  justify-content: flex-start;
+}
+
+body[dir="rtl"] input, body[dir="rtl"] select {
+  text-align: right;
 }
