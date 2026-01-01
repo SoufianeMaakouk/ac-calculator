@@ -11,6 +11,16 @@ const LANG = {
     distance: "Distance to outdoor unit (m)",
     roomType: "Room Type",
     sunExposure: "Sun Exposure",
+    roomTypes: [
+      { value: "bedroom", label: "Bedroom" },
+      { value: "living", label: "Living Room" },
+      { value: "kitchen", label: "Kitchen" }
+    ],
+    sunLevels: [
+      { value: "low", label: "Low" },
+      { value: "medium", label: "Medium" },
+      { value: "high", label: "High" }
+    ],
     summary: "Project Summary",
     totalBTU: "Total BTU Required",
     system: "Recommended System",
@@ -27,6 +37,16 @@ const LANG = {
     distance: "Distance vers unité extérieure (m)",
     roomType: "Type de pièce",
     sunExposure: "Exposition au soleil",
+    roomTypes: [
+      { value: "bedroom", label: "Chambre" },
+      { value: "living", label: "Salon" },
+      { value: "kitchen", label: "Cuisine" }
+    ],
+    sunLevels: [
+      { value: "low", label: "Faible" },
+      { value: "medium", label: "Moyenne" },
+      { value: "high", label: "Élevée" }
+    ],
     summary: "Résumé du projet",
     totalBTU: "BTU total requis",
     system: "Système recommandé",
@@ -60,6 +80,13 @@ function updateUIText() {
     if (labels[1]) labels[1].innerText = t.distance;
     if (labels[2]) labels[2].innerText = t.roomType;
     if (labels[3]) labels[3].innerText = t.sunExposure;
+
+    // Update dropdown options
+    const typeSelect = card.querySelector(".type");
+    const sunSelect = card.querySelector(".sun");
+
+    typeSelect.innerHTML = t.roomTypes.map(rt => `<option value="${rt.value}">${rt.label}</option>`).join("");
+    sunSelect.innerHTML = t.sunLevels.map(s => `<option value="${s.value}">${s.label}</option>`).join("");
   });
 }
 
@@ -70,6 +97,10 @@ function addRoom() {
 
   const room = document.createElement("div");
   room.className = "room-card";
+
+  const roomTypeOptions = t.roomTypes.map(rt => `<option value="${rt.value}">${rt.label}</option>`).join("");
+  const sunOptions = t.sunLevels.map(s => `<option value="${s.value}">${s.label}</option>`).join("");
+
   room.innerHTML = `
     <h3>Room ${roomCount}</h3>
 
@@ -80,18 +111,10 @@ function addRoom() {
     <input type="number" class="distance" placeholder="5" />
 
     <label>${t.roomType}</label>
-    <select class="type">
-      <option value="bedroom">Bedroom</option>
-      <option value="living">Living Room</option>
-      <option value="kitchen">Kitchen</option>
-    </select>
+    <select class="type">${roomTypeOptions}</select>
 
     <label>${t.sunExposure}</label>
-    <select class="sun">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
+    <select class="sun">${sunOptions}</select>
   `;
 
   document.getElementById("rooms").appendChild(room);
