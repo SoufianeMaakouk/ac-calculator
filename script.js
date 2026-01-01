@@ -1,64 +1,38 @@
+let rooms = [];
+
+function addRoom() {
+  const id = rooms.length;
+  rooms.push({});
+
+  const div = document.createElement("div");
+  div.className = "room";
+  div.innerHTML = `
+    <h3>Room ${id + 1}</h3>
+    <input placeholder="Area m²" onchange="rooms[${id}].area = +this.value" />
+    <input placeholder="Ceiling height" value="2.6" onchange="rooms[${id}].ceilingHeight = +this.value" />
+    <select onchange="rooms[${id}].type = this.value">
+      <option value="bedroom">Bedroom</option>
+      <option value="living">Living</option>
+      <option value="kitchen">Kitchen</option>
+    </select>
+    <select onchange="rooms[${id}].sun = this.value">
+      <option value="low">Low Sun</option>
+      <option value="medium">Medium Sun</option>
+      <option value="high">High Sun</option>
+    </select>
+    <input placeholder="Distance m" onchange="rooms[${id}].distance = +this.value" />
+  `;
+
+  document.getElementById("rooms").appendChild(div);
+}
+
 async function calculate() {
-  const result = document.getElementById("result");
-  const error = document.getElementById("error");
-  const loader = document.getElementById("loader");
+  const res = await fetch("https://ac-calculator-backend.onrender.com/project/calculate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ projectName: "My Project", rooms })
+  });
 
-  result.classList.add("hidden");
-  error.classList.add("hidden");
-  loader.classList.remove("hidden");
-
-  const rooms = Number(document.getElementById("rooms").value);
-  const area = Number(document.getElementById("area").value);
-  const distance = Number(document.getElementById("distance").value) || 5;
-
-  try {
-    const res = await fetch(
-      "https://ac-calculator-backend.onrender.com/calculate",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rooms, area, distance })
-      }
-    );
-
-    const data = await res.json();
-    loader.classList.add("hidden");
-
-    if (!res.ok) {
-      error.textContent = data.error;
-      error.classList.remove("hidden");
-      return;
-    }
-
-    const priceEstimate =
-      data.materials.copperPipe_m * 15 +
-      data.materials.drainPipe_m * 5 +
-      data.materials.cable_m * 4;
-
-    const systemType =
-      data.indoorUnits > 2
-        ? "Multi-Split system recommended"
-        : "Single Split units recommended";
-
-    result.innerHTML = `
-      <div class="result-card"><strong>Total Area:</strong> ${data.area} m²</div>
-      <div class="result-card"><strong>Total Capacity:</strong> ${data.btu} BTU</div>
-      <div class="result-card"><strong>Indoor Units:</strong> ${data.indoorUnits}</div>
-
-      <div class="result-card"><strong>Copper Pipe:</strong> ${data.materials.copperPipe_m} m</div>
-      <div class="result-card"><strong>Drain Pipe:</strong> ${data.materials.drainPipe_m} m</div>
-      <div class="result-card"><strong>Electrical Cable:</strong> ${data.materials.cable_m} m</div>
-      <div class="result-card"><strong>Breaker:</strong> ${data.materials.breaker}</div>
-
-      <div class="result-card"><strong>Estimated Material Cost:</strong> €${priceEstimate}</div>
-      <div class="result-card"><strong>Recommendation:</strong> ${systemType}</div>
-    `;
-
-    result.classList.remove("hidden");
-
-  } catch (err) {
-    loader.classList.add("hidden");
-    error.textContent = "Connection error. Please try again.";
-    error.classList.remove("hidden");
-  }
+  const data = await res.json();
+  document.getElementById("result").textContent = JSON.stringify(data, null, 2);
 }
