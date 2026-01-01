@@ -90,6 +90,17 @@ button {
   display: none;
 }
 
+/* ===== RTL SUPPORT ===== */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl .room-card, .rtl .result-card, .rtl .summary-card {
+  border-left: none;
+  border-right: 5px solid #2563eb;
+}
+
 /* ===== MOBILE-FIRST RESPONSIVE ===== */
 @media (max-width: 600px) {
   .buttons {
@@ -98,5 +109,9 @@ button {
   .room-card, .result-card, .summary-card {
     border-left-width: 3px;
     padding: 12px;
+  }
+  .rtl .room-card, .rtl .result-card, .rtl .summary-card {
+    border-left: none;
+    border-right-width: 3px;
   }
 }
