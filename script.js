@@ -1,6 +1,8 @@
-let token = localStorage.getItem("token") || null;
+let token = localStorage.getItem("token");
 let rooms = [];
 let language = "en";
+
+/* ================= TRANSLATIONS ================= */
 
 const translations = {
   en: {
@@ -22,7 +24,13 @@ const translations = {
     remove: "Remove",
     system: "System Recommendation",
     totalBTU: "Total BTU",
-    export: "Export PDF"
+    export: "Export PDF",
+    bedroom: "Bedroom",
+    living: "Living Room",
+    kitchen: "Kitchen",
+    low: "Low Sun",
+    medium: "Medium Sun",
+    high: "High Sun"
   },
   fr: {
     loginTitle: "Calculateur de climatisation",
@@ -32,9 +40,9 @@ const translations = {
     register: "S'inscrire",
     projectName: "Nom du projet",
     addRoom: "➕ Ajouter pièce",
-    calculateProject: "Calculer le projet",
-    saveProject: "💾 Enregistrer le projet",
-    savedProjects: "Projets enregistrés",
+    calculateProject: "Calculer",
+    saveProject: "💾 Enregistrer",
+    savedProjects: "Projets",
     type: "Type",
     sun: "Soleil",
     area: "Surface (m²)",
@@ -43,130 +51,165 @@ const translations = {
     remove: "Supprimer",
     system: "Système recommandé",
     totalBTU: "BTU total",
-    export: "Exporter PDF"
+    export: "Exporter PDF",
+    bedroom: "Chambre",
+    living: "Salon",
+    kitchen: "Cuisine",
+    low: "Faible",
+    medium: "Moyen",
+    high: "Fort"
   },
   ar: {
-    loginTitle: "حاسبة مواد التكييف",
+    loginTitle: "حاسبة التكييف",
     email: "البريد الإلكتروني",
     password: "كلمة المرور",
-    login: "تسجيل الدخول",
+    login: "دخول",
     register: "تسجيل",
     projectName: "اسم المشروع",
     addRoom: "➕ إضافة غرفة",
-    calculateProject: "حساب المشروع",
-    saveProject: "💾 حفظ المشروع",
-    savedProjects: "المشاريع المحفوظة",
+    calculateProject: "احسب",
+    saveProject: "💾 حفظ",
+    savedProjects: "المشاريع",
     type: "النوع",
-    sun: "التعرض للشمس",
+    sun: "الشمس",
     area: "المساحة (م²)",
     distance: "المسافة (م)",
     ceiling: "ارتفاع السقف",
     remove: "حذف",
-    system: "نظام موصى به",
+    system: "النظام المقترح",
     totalBTU: "مجموع BTU",
-    export: "تصدير PDF"
+    export: "تصدير PDF",
+    bedroom: "غرفة نوم",
+    living: "صالة",
+    kitchen: "مطبخ",
+    low: "ضعيف",
+    medium: "متوسط",
+    high: "قوي"
   }
 };
 
-// ===== Helper to translate UI =====
-function translateUI() {
-  const t = translations[language];
-  document.getElementById("title").textContent = t.loginTitle;
-  document.getElementById("email").placeholder = t.email;
-  document.getElementById("password").placeholder = t.password;
-  document.getElementById("projectName").placeholder = t.projectName;
-  document.getElementById("addRoomBtn").textContent = t.addRoom;
-  document.getElementById("calculateBtn").textContent = t.calculateProject;
-  document.getElementById("saveProjectBtn").textContent = t.saveProject;
+/* ================= HELPERS ================= */
+
+function el(id) {
+  return document.getElementById(id);
 }
 
-// ===== Handle language change =====
-document.getElementById("languageSelect").addEventListener("change", e => {
-  language = e.target.value;
+function translateUI() {
+  const t = translations[language];
   document.body.dir = language === "ar" ? "rtl" : "ltr";
-  translateUI();
-});
+
+  if (el("title")) el("title").textContent = t.loginTitle;
+  if (el("email")) el("email").placeholder = t.email;
+  if (el("password")) el("password").placeholder = t.password;
+  if (el("projectName")) el("projectName").placeholder = t.projectName;
+  if (el("addRoomBtn")) el("addRoomBtn").textContent = t.addRoom;
+  if (el("calculateBtn")) el("calculateBtn").textContent = t.calculateProject;
+  if (el("saveProjectBtn")) el("saveProjectBtn").textContent = t.saveProject;
+
+  renderRooms();
+}
+
+/* ================= LANGUAGE ================= */
+
+if (el("languageSelect")) {
+  el("languageSelect").addEventListener("change", e => {
+    language = e.target.value;
+    translateUI();
+  });
+}
+
 translateUI();
 
-// ===== Login / Register =====
-document.getElementById("loginBtn").addEventListener("click", login);
-document.getElementById("registerBtn").addEventListener("click", register);
+/* ================= AUTH ================= */
+
+if (el("loginBtn")) el("loginBtn").onclick = login;
+if (el("registerBtn")) el("registerBtn").onclick = register;
 
 async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = el("email").value;
+  const password = el("password").value;
+
   const res = await fetch("https://ac-calculator-backend.onrender.com/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
+
   const data = await res.json();
   if (data.token) {
-    token = data.token;
-    localStorage.setItem("token", token);
-    showDashboard();
-  } else {
-    alert(data.message);
-  }
+    localStorage.setItem("token", data.token);
+    location.href = "dashboard.html";
+  } else alert(data.message);
 }
 
 async function register() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = el("email").value;
+  const password = el("password").value;
+
   const res = await fetch("https://ac-calculator-backend.onrender.com/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
+
   const data = await res.json();
   alert(data.message);
 }
 
-// ===== Show Dashboard =====
-function showDashboard() {
-  document.getElementById("loginDiv").classList.add("hidden");
-  document.getElementById("dashboard").classList.remove("hidden");
-  loadSavedProjects();
-}
+/* ================= DASHBOARD ================= */
 
-// ===== Add Room =====
-document.getElementById("addRoomBtn").addEventListener("click", addRoom);
+if (el("addRoomBtn")) el("addRoomBtn").onclick = addRoom;
+if (el("calculateBtn")) el("calculateBtn").onclick = calculate;
+if (el("saveProjectBtn")) el("saveProjectBtn").onclick = saveProject;
 
 function addRoom() {
-  const id = rooms.length;
-  rooms.push({ area: 20, ceilingHeight: 2.6, type: "bedroom", sun: "low", distance: 5 });
+  rooms.push({
+    area: 20,
+    ceilingHeight: 2.6,
+    type: "bedroom",
+    sun: "low",
+    distance: 5
+  });
+  renderRooms();
+}
 
+function removeRoom(index) {
+  rooms.splice(index, 1);
+  renderRooms();
+}
+
+function renderRooms() {
+  if (!el("rooms")) return;
   const t = translations[language];
-  const div = document.createElement("div");
-  div.className = "room";
-  div.innerHTML = `
-    <h4>${t.addRoom} ${id + 1}</h4>
-    <input placeholder="${t.area}" onchange="rooms[${id}].area = +this.value" value="20" />
-    <input placeholder="${t.ceiling}" onchange="rooms[${id}].ceilingHeight = +this.value" value="2.6" />
-    <select onchange="rooms[${id}].type = this.value">
-      <option value="bedroom">Bedroom</option>
-      <option value="living">Living</option>
-      <option value="kitchen">Kitchen</option>
-    </select>
-    <select onchange="rooms[${id}].sun = this.value">
-      <option value="low">Low Sun</option>
-      <option value="medium">Medium Sun</option>
-      <option value="high">High Sun</option>
-    </select>
-    <input placeholder="${t.distance}" onchange="rooms[${id}].distance = +this.value" value="5" />
-    <button onclick="removeRoom(${id})">${t.remove}</button>
-  `;
-  document.getElementById("rooms").appendChild(div);
+  el("rooms").innerHTML = "";
+
+  rooms.forEach((r, i) => {
+    el("rooms").innerHTML += `
+      <div class="room">
+        <h4>${t.addRoom} ${i + 1}</h4>
+        <input type="number" value="${r.area}" placeholder="${t.area}"
+          onchange="rooms[${i}].area=this.valueAsNumber">
+        <input type="number" value="${r.ceilingHeight}" placeholder="${t.ceiling}"
+          onchange="rooms[${i}].ceilingHeight=this.valueAsNumber">
+        <select onchange="rooms[${i}].type=this.value">
+          <option value="bedroom">${t.bedroom}</option>
+          <option value="living">${t.living}</option>
+          <option value="kitchen">${t.kitchen}</option>
+        </select>
+        <select onchange="rooms[${i}].sun=this.value">
+          <option value="low">${t.low}</option>
+          <option value="medium">${t.medium}</option>
+          <option value="high">${t.high}</option>
+        </select>
+        <input type="number" value="${r.distance}" placeholder="${t.distance}"
+          onchange="rooms[${i}].distance=this.valueAsNumber">
+        <button onclick="removeRoom(${i})">${t.remove}</button>
+      </div>
+    `;
+  });
 }
 
-function removeRoom(idx) {
-  rooms.splice(idx, 1);
-  document.getElementById("rooms").innerHTML = "";
-  rooms.forEach((r, i) => addRoom());
-}
-
-// ===== Calculate Project =====
-document.getElementById("calculateBtn").addEventListener("click", calculate);
+/* ================= CALCULATE ================= */
 
 async function calculate() {
   const res = await fetch("https://ac-calculator-backend.onrender.com/project/calculate", {
@@ -174,87 +217,56 @@ async function calculate() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ rooms })
   });
-  const data = await res.json();
 
-  const t = translations[language];
-  const summary = document.getElementById("summary");
-  summary.classList.remove("hidden");
-  summary.innerHTML = `
-    <h3>${t.system}: ${data.systemRecommendation}</h3>
-    <h3>${t.totalBTU}: ${data.totalBTU}</h3>
+  window.lastCalculation = await res.json();
+  el("summary").classList.remove("hidden");
+
+  el("summary").innerHTML = `
+    <h3>${translations[language].system}: ${lastCalculation.systemRecommendation}</h3>
+    <h3>${translations[language].totalBTU}: ${lastCalculation.totalBTU}</h3>
   `;
-
-  const resultsDiv = document.getElementById("results");
-  resultsDiv.innerHTML = "";
-  data.rooms.forEach((r, idx) => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <h4>Room ${idx + 1}</h4>
-      <p>${t.type}: ${r.type}</p>
-      <p>${t.sun}: ${r.sun}</p>
-      <p>${t.area}: ${r.area} m²</p>
-      <p>${t.ceiling}: ${r.ceilingHeight} m</p>
-      <p>${t.distance}: ${r.distance} m</p>
-      <p>BTU: ${r.btu}</p>
-      <p>Pipe: ${r.materials.pipeSize}</p>
-    `;
-    resultsDiv.appendChild(card);
-  });
-
-  // Store last calculation for saving
-  window.lastCalculation = data;
 }
 
-// ===== Save Project =====
-document.getElementById("saveProjectBtn").addEventListener("click", async () => {
-  const projectName = document.getElementById("projectName").value || "Untitled Project";
-  const data = window.lastCalculation;
-  if (!data) return alert("Calculate first!");
+/* ================= SAVE & LOAD ================= */
 
-  const res = await fetch("https://ac-calculator-backend.onrender.com/project/save", {
+async function saveProject() {
+  if (!lastCalculation) return alert("Calculate first!");
+
+  await fetch("https://ac-calculator-backend.onrender.com/project/save", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
     body: JSON.stringify({
-      projectName,
-      rooms: rooms,
-      totalBTU: data.totalBTU,
-      totalMaterials: data.totalMaterials,
-      systemRecommendation: data.systemRecommendation
+      projectName: el("projectName").value || "Untitled",
+      rooms,
+      ...lastCalculation
     })
   });
-  const result = await res.json();
-  alert(result.message);
+
   loadSavedProjects();
-});
+}
 
-// ===== Load Saved Projects =====
 async function loadSavedProjects() {
+  if (!el("savedProjects")) return;
+
   const res = await fetch("https://ac-calculator-backend.onrender.com/project/list", {
-    headers: { "Authorization": `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` }
   });
+
   const projects = await res.json();
-  const t = translations[language];
-
-  const container = document.getElementById("savedProjects");
-  container.innerHTML = "";
-  projects.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
+  el("savedProjects").innerHTML = projects.map(p => `
+    <div class="card">
       <h4>${p.projectName}</h4>
-      <p>${t.totalBTU}: ${p.totalBTU}</p>
-      <p>${t.system}: ${p.systemRecommendation}</p>
-      <button onclick="exportPDF('${p._id}')">${t.export}</button>
-    `;
-    container.appendChild(div);
-  });
+      <p>${translations[language].totalBTU}: ${p.totalBTU}</p>
+      <button onclick="exportPDF('${p._id}')">${translations[language].export}</button>
+    </div>
+  `).join("");
 }
 
-// ===== Export PDF =====
 function exportPDF(id) {
-  window.open(`https://ac-calculator-backend.onrender.com/project/export/${id}?token=${token}`, "_blank");
+  window.open(`https://ac-calculator-backend.onrender.com/project/export/${id}?token=${token}`);
 }
 
-// ===== Auto-show dashboard if logged in =====
-if (token) showDashboard();
+if (token && el("savedProjects")) loadSavedProjects();
