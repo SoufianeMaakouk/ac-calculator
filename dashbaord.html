@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Installer Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <span id="userEmail"></span>
+  <button onclick="logout()" class="logout">Logout</button>
+</header>
+
+<main class="container">
+  <h1>AC Project Dashboard</h1>
+
+  <input id="projectName" placeholder="Project Name" />
+  <button onclick="saveProject()">Save Project</button>
+  <button onclick="exportPDF()">Export PDF</button>
+
+  <pre id="result"></pre>
+</main>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
