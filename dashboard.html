@@ -1,27 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Installer Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AC Calculator</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ===== LOGIN / REGISTER ===== -->
+  <div id="loginDiv">
+    <h1 id="title"></h1>
 
-<header class="topbar">
-  <span id="userEmail"></span>
-  <button onclick="logout()" class="logout">Logout</button>
-</header>
+    <select id="languageSelect">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="ar">العربية</option>
+    </select>
 
-<main class="container">
-  <h1>AC Project Dashboard</h1>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <div>
+      <button id="loginBtn"></button>
+      <button id="registerBtn"></button>
+    </div>
+  </div>
 
-  <input id="projectName" placeholder="Project Name" />
-  <button onclick="saveProject()">Save Project</button>
-  <button onclick="exportPDF()">Export PDF</button>
+  <!-- ===== DASHBOARD ===== -->
+  <div id="dashboard" class="hidden">
+    <button id="logoutBtn">Logout</button>
 
-  <pre id="result"></pre>
-</main>
+    <input type="text" id="projectName" placeholder="Project Name">
+    <button id="addRoomBtn"></button>
+    <button id="calculateBtn"></button>
+    <button id="saveProjectBtn"></button>
 
-<script src="dashboard.js"></script>
+    <div id="rooms"></div>
+
+    <div id="summary" class="hidden"></div>
+    <h2 id="savedProjectsTitle"></h2>
+    <div id="savedProjects"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
