@@ -78,7 +78,7 @@ if(el("logoutBtn")) el("logoutBtn").onclick=logout;
 async function login(){
   const email=el("email").value;
   const password=el("password").value;
-  const res=await fetch("https://ac-calculator-backend.onrender.com/login", {
+  const res=await fetch("https://ac-calculator-backend.onrender.com/auth/login", {
     method:"POST", headers:{"Content-Type":"application/json"},
     body:JSON.stringify({email,password})
   });
