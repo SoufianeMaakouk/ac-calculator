@@ -1,46 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AC Calculator</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Installer Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- ===== LOGIN / REGISTER ===== -->
-  <div id="loginDiv">
-    <h1 id="title"></h1>
 
-    <select id="languageSelect">
-      <option value="en">English</option>
-      <option value="fr">Français</option>
-      <option value="ar">العربية</option>
-    </select>
+<header class="topbar">
+  <h2>AC Installer Dashboard</h2>
+  <button id="logoutBtn" class="logout">Logout</button>
+</header>
 
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <div>
-      <button id="loginBtn"></button>
-      <button id="registerBtn"></button>
-    </div>
+<div class="container">
+  <input id="projectName" placeholder="Project Name" />
+
+  <button onclick="newProject()">➕ New Project</button>
+  <button onclick="addRoom()">Add Room</button>
+  <button onclick="calculate()">Calculate</button>
+
+  <div id="rooms"></div>
+
+  <div id="summary" class="hidden">
+    <h3>Total Capacity</h3>
+    <p id="totalKw"></p>
+    <button id="saveProjectBtn" onclick="saveProject()">💾 Save Project</button>
+    <button onclick="exportPDF()">📄 Export PDF</button>
   </div>
 
-  <!-- ===== DASHBOARD ===== -->
-  <div id="dashboard" class="hidden">
-<button id="logoutBtn" class="logout">Logout</button>
+  <h3>Saved Projects</h3>
+  <div id="savedProjects"></div>
+</div>
 
-    <input type="text" id="projectName" placeholder="Project Name">
-    <button id="addRoomBtn"></button>
-    <button id="calculateBtn"></button>
-    <button id="saveProjectBtn"></button>
-
-    <div id="rooms"></div>
-
-    <div id="summary" class="hidden"></div>
-    <h2 id="savedProjectsTitle"></h2>
-    <div id="savedProjects"></div>
-  </div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
