@@ -1,145 +1,55 @@
-/* ===== Global Styles ===== */
 body {
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
   margin: 0;
-  padding: 0;
-  line-height: 1.4;
+  background: #f5f5f5;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: #0d6efd;
+  color: white;
 }
 
 .container {
-  max-width: 900px;
-  margin: auto;
+  padding: 15px;
+}
+
+button {
+  padding: 10px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 6px;
+  background: #0d6efd;
+  color: white;
+  cursor: pointer;
+}
+
+.logout {
+  background: #dc3545;
+}
+
+.room, .card {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
 }
 
-/* ===== Language Selector ===== */
-.language-selector {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
-}
-
-.language-selector select {
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-/* ===== Headings ===== */
-h1, h2, h3, h4 {
-  margin: 10px 0;
-  color: #333;
-}
-
-h1 {
-  text-align: center;
-}
-
-/* ===== Hidden Utility ===== */
 .hidden {
   display: none;
 }
 
-/* ===== Forms ===== */
-input, select, button {
+input {
+  padding: 8px;
   width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
+  margin-bottom: 5px;
 }
 
-input:focus, select:focus {
-  outline: none;
-  border-color: #007bff;
-}
-
-/* ===== Buttons ===== */
-button {
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-.primary {
-  background: #007bff;
-  color: white;
-  border: none;
-}
-
-.secondary {
-  background: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-}
-
-/* ===== Room Cards ===== */
-.room, .card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.room h4, .card h4 {
-  margin-top: 0;
-}
-
-/* ===== Buttons Container ===== */
-.buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-
-/* ===== Dashboard Sections ===== */
-#summary {
-  background: #e0f7fa;
-  border-left: 5px solid #007bff;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-}
-
-#results {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
-}
-
-/* ===== Saved Projects ===== */
-#savedProjects {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 600px) {
-  .buttons {
-    flex-direction: column;
+/* 📱 MOBILE */
+@media (max-width: 768px) {
+  button {
+    width: 100%;
   }
-}
-
-/* ===== RTL Support ===== */
-body[dir="rtl"] {
-  text-align: right;
-}
-
-body[dir="rtl"] .language-selector {
-  justify-content: flex-start;
-}
-
-body[dir="rtl"] input, body[dir="rtl"] select {
-  text-align: right;
 }
