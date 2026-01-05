@@ -139,55 +139,38 @@ function calculate() {
 /* ================= SAVE / LOAD ================= */
 
 async function saveProject() {
-  if (!lastCalculation) return alert("Calculate first");
+  if (!window.lastCalculation) return alert("Calculate first!");
 
-  const name = el("projectName").value.trim();
-  if (!name) return alert("Enter project name");
+  const projectName = document.getElementById("projectName").value || "Untitled Project";
 
-  const res = await fetch(`${API}/projects`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      name,
-      rooms,
-      ...lastCalculation
-    })
-  });
+  try {
+    const res = await fetch("https://ac-calculator-backend.onrender.com/project/save", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`  // <--- make sure token is here
+      },
+      body: JSON.stringify({
+        projectName,
+        rooms,
+        totalBTU: window.lastCalculation.totalBTU,
+        totalMaterials: window.lastCalculation.totalMaterials,
+        systemRecommendation: window.lastCalculation.systemRecommendation
+      })
+    });
 
-  if (!res.ok) return alert("Save failed");
-
-  loadSavedProjects();
+    const data = await res.json();
+    if (res.ok) {
+      alert("Project saved successfully!");
+      loadSavedProjects();
+    } else {
+      alert("Save failed: " + data.message);
+    }
+  } catch (err) {
+    alert("Save failed: " + err.message);
+  }
 }
 
-async function loadSavedProjects() {
-  if (!el("savedProjects")) return;
-
-  const res = await fetch(`${API}/projects`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  const projects = await res.json();
-  el("savedProjects").innerHTML = "";
-
-  projects.forEach(p => {
-    el("savedProjects").innerHTML += `
-      <div class="card">
-        <strong>${p.name}</strong>
-        <p>${p.totalBTU} BTU</p>
-        <button onclick='openProject(${JSON.stringify(p.rooms)})'>Open</button>
-      </div>
-    `;
-  });
-}
-
-function openProject(projectRooms) {
-  newProject();
-  rooms = projectRooms;
-  renderRooms();
-}
 
 /* ================= INIT ================= */
 
