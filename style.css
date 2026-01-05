@@ -1,55 +1,197 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f5f5f5;
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --accent: #16a34a;
+  --danger: #dc2626;
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --radius: 14px;
 }
 
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  background: #0d6efd;
-  color: white;
+* {
+  box-sizing: border-box;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .container {
-  padding: 15px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 16px;
 }
 
-button {
-  padding: 10px;
-  margin: 5px 0;
+/* ================= HEADER ================= */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card);
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.05);
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.header button {
+  background: var(--danger);
   border: none;
-  border-radius: 6px;
-  background: #0d6efd;
   color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.logout {
-  background: #dc3545;
-}
+/* ================= INPUTS ================= */
 
-.room, .card {
-  background: white;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-}
-
-.hidden {
-  display: none;
-}
-
-input {
-  padding: 8px;
+input, select, button {
   width: 100%;
-  margin-bottom: 5px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
-/* 📱 MOBILE */
-@media (max-width: 768px) {
-  button {
-    width: 100%;
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* ================= BUTTONS ================= */
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button.secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+button.success {
+  background: var(--accent);
+}
+
+button.danger {
+  background: var(--danger);
+}
+
+/* ================= ROOMS ================= */
+
+#rooms {
+  display: grid;
+  gap: 14px;
+}
+
+.room {
+  background: var(--card);
+  padding: 16px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,.05);
+}
+
+.room h4 {
+  margin: 0 0 10px;
+}
+
+.room label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ================= ACTION BAR ================= */
+
+.actions {
+  position: sticky;
+  bottom: 0;
+  background: var(--card);
+  padding: 12px;
+  border-radius: var(--radius);
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  box-shadow: 0 -8px 20px rgba(0,0,0,.05);
+}
+
+/* ================= SUMMARY ================= */
+
+#summary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 20px;
+  border-radius: var(--radius);
+  margin-top: 16px;
+}
+
+#summary h3 {
+  margin: 0 0 6px;
+}
+
+/* ================= SAVED PROJECTS ================= */
+
+#savedProjects {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.card {
+  background: var(--card);
+  padding: 14px;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 16px rgba(0,0,0,.05);
+}
+
+.card button {
+  margin-top: 8px;
+}
+
+/* ================= AUTH ================= */
+
+.auth {
+  max-width: 420px;
+  margin: 80px auto;
+  background: var(--card);
+  padding: 22px;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+/* ================= RTL ================= */
+
+body[dir="rtl"] {
+  direction: rtl;
+}
+
+body[dir="rtl"] .header {
+  flex-direction: row-reverse;
+}
+
+/* ================= DESKTOP ================= */
+
+@media (min-width: 768px) {
+  #rooms {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .actions {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
