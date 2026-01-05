@@ -1,39 +1,133 @@
-const API = "https://ac-calculator-backend.onrender.com";
-const token = localStorage.getItem("token");
+// ================= GLOBALS =================
+let token = localStorage.getItem("token") || null;
 let rooms = [];
+let language = "en";
 let lastCalculation = null;
 
-/* ================= HELPERS ================= */
+// ================= TRANSLATIONS =================
+const translations = {
+  en: {
+    loginTitle: "AC Installer Dashboard",
+    email: "Email",
+    password: "Password",
+    login: "Login",
+    register: "Register",
+    projectName: "Project Name",
+    addRoom: "➕ Add Room",
+    calculateProject: "Calculate",
+    saveProject: "💾 Save Project",
+    savedProjects: "Saved Projects",
+    type: "Type",
+    sun: "Sun",
+    area: "Area (m²)",
+    distance: "Distance (m)",
+    ceiling: "Ceiling height",
+    remove: "Remove",
+    system: "System Recommendation",
+    totalBTU: "Total BTU",
+    export: "Export PDF",
+    bedroom: "Bedroom",
+    living: "Living Room",
+    kitchen: "Kitchen",
+    low: "Low Sun",
+    medium: "Medium Sun",
+    high: "High Sun",
+    logout: "Logout"
+  },
+  fr: {
+    loginTitle: "Tableau de l'installateur AC",
+    email: "Email",
+    password: "Mot de passe",
+    login: "Connexion",
+    register: "S'inscrire",
+    projectName: "Nom du projet",
+    addRoom: "➕ Ajouter pièce",
+    calculateProject: "Calculer",
+    saveProject: "💾 Enregistrer",
+    savedProjects: "Projets enregistrés",
+    type: "Type",
+    sun: "Soleil",
+    area: "Surface (m²)",
+    distance: "Distance (m)",
+    ceiling: "Hauteur plafond",
+    remove: "Supprimer",
+    system: "Système recommandé",
+    totalBTU: "BTU total",
+    export: "Exporter PDF",
+    bedroom: "Chambre",
+    living: "Salon",
+    kitchen: "Cuisine",
+    low: "Faible",
+    medium: "Moyen",
+    high: "Fort",
+    logout: "Déconnexion"
+  },
+  ar: {
+    loginTitle: "لوحة التثبيت لمكيف الهواء",
+    email: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    login: "تسجيل الدخول",
+    register: "تسجيل",
+    projectName: "اسم المشروع",
+    addRoom: "➕ إضافة غرفة",
+    calculateProject: "احسب",
+    saveProject: "💾 حفظ",
+    savedProjects: "المشاريع المحفوظة",
+    type: "النوع",
+    sun: "الشمس",
+    area: "المساحة (م²)",
+    distance: "المسافة (م)",
+    ceiling: "ارتفاع السقف",
+    remove: "حذف",
+    system: "النظام المقترح",
+    totalBTU: "مجموع BTU",
+    export: "تصدير PDF",
+    bedroom: "غرفة نوم",
+    living: "صالة",
+    kitchen: "مطبخ",
+    low: "ضعيف",
+    medium: "متوسط",
+    high: "قوي",
+    logout: "تسجيل الخروج"
+  }
+};
 
-function el(id) {
-  return document.getElementById(id);
+// ================= HELPERS =================
+function el(id) { return document.getElementById(id); }
+
+function translateUI() {
+  const t = translations[language];
+  document.body.dir = language === "ar" ? "rtl" : "ltr";
+
+  if (el("title")) el("title").textContent = t.loginTitle;
+  if (el("projectName")) el("projectName").placeholder = t.projectName;
+  if (el("addRoomBtn")) el("addRoomBtn").textContent = t.addRoom;
+  if (el("calculateBtn")) el("calculateBtn").textContent = t.calculateProject;
+  if (el("saveProjectBtn")) el("saveProjectBtn").textContent = t.saveProject;
+  if (el("logoutBtn")) el("logoutBtn").textContent = t.logout;
+
+  renderRooms();
 }
 
-/* ================= AUTH GUARD ================= */
-
-if (!token && location.pathname.includes("dashboard")) {
-  location.href = "login.html";
+// ================= LANGUAGE SELECT =================
+if (el("languageSelect")) {
+  el("languageSelect").addEventListener("change", e => {
+    language = e.target.value;
+    translateUI();
+  });
 }
+translateUI();
 
-/* ================= LOGOUT ================= */
-
+// ================= LOGOUT =================
 if (el("logoutBtn")) {
-  el("logoutBtn").onclick = () => {
+  el("logoutBtn").addEventListener("click", () => {
     localStorage.removeItem("token");
+    token = null;
     location.href = "login.html";
-  };
+  });
 }
 
-/* ================= PROJECT ================= */
-
-function newProject() {
-  rooms = [];
-  lastCalculation = null;
-  el("rooms").innerHTML = "";
-  el("summary").classList.add("hidden");
-  el("projectName").value = "";
-}
-
+// ================= ROOMS =================
 function addRoom() {
   rooms.push({
     area: 20,
@@ -50,112 +144,83 @@ function removeRoom(index) {
   renderRooms();
 }
 
-/* ================= UI ================= */
-
 function renderRooms() {
   if (!el("rooms")) return;
+  const t = translations[language];
   el("rooms").innerHTML = "";
 
   rooms.forEach((r, i) => {
     el("rooms").innerHTML += `
       <div class="room">
-        <h4>Room ${i + 1}</h4>
-
-        <label>Area (m²)</label>
-        <input type="number" value="${r.area}"
+        <h4>${t.addRoom} ${i + 1}</h4>
+        <input type="number" value="${r.area}" placeholder="${t.area}"
           onchange="rooms[${i}].area=this.valueAsNumber">
-
-        <label>Ceiling height (m)</label>
-        <input type="number" step="0.1" value="${r.ceilingHeight}"
+        <input type="number" value="${r.ceilingHeight}" placeholder="${t.ceiling}"
           onchange="rooms[${i}].ceilingHeight=this.valueAsNumber">
-
-        <label>Room type</label>
         <select onchange="rooms[${i}].type=this.value">
-          <option value="bedroom" ${r.type === "bedroom" ? "selected" : ""}>Bedroom</option>
-          <option value="living" ${r.type === "living" ? "selected" : ""}>Living Room</option>
-          <option value="kitchen" ${r.type === "kitchen" ? "selected" : ""}>Kitchen</option>
+          <option value="bedroom">${t.bedroom}</option>
+          <option value="living">${t.living}</option>
+          <option value="kitchen">${t.kitchen}</option>
         </select>
-
-        <label>Sun exposure</label>
         <select onchange="rooms[${i}].sun=this.value">
-          <option value="low" ${r.sun === "low" ? "selected" : ""}>Low</option>
-          <option value="medium" ${r.sun === "medium" ? "selected" : ""}>Medium</option>
-          <option value="high" ${r.sun === "high" ? "selected" : ""}>High</option>
+          <option value="low">${t.low}</option>
+          <option value="medium">${t.medium}</option>
+          <option value="high">${t.high}</option>
         </select>
-
-        <label>Distance (m)</label>
-        <input type="number" value="${r.distance}"
+        <input type="number" value="${r.distance}" placeholder="${t.distance}"
           onchange="rooms[${i}].distance=this.valueAsNumber">
-
-        <button onclick="removeRoom(${i})">❌ Remove</button>
+        <button onclick="removeRoom(${i})">${t.remove}</button>
       </div>
     `;
   });
 }
 
-/* ================= CALCULATION ================= */
+// ================= CALCULATE =================
+async function calculate() {
+  if (!rooms.length) return alert("Add at least one room!");
 
-function calculateRoomBTU(room) {
-  let btu = room.area * 600;
+  try {
+    const res = await fetch("https://ac-calculator-backend.onrender.com/project/calculate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rooms })
+    });
+    const data = await res.json();
+    lastCalculation = data;
 
-  // Ceiling height
-  if (room.ceilingHeight > 2.7) btu *= 1.1;
+    el("summary").classList.remove("hidden");
+    el("summary").innerHTML = `
+      <h3>${translations[language].system}: ${data.systemRecommendation}</h3>
+      <h3>${translations[language].totalBTU}: ${data.totalBTU}</h3>
+      <button id="saveProjectBtn">${translations[language].saveProject}</button>
+      <button onclick="exportPDF()">${translations[language].export}</button>
+    `;
 
-  // Room type
-  if (room.type === "living") btu *= 1.1;
-  if (room.type === "kitchen") btu *= 1.2;
+    if (el("saveProjectBtn")) el("saveProjectBtn").addEventListener("click", saveProject);
 
-  // Sun exposure
-  if (room.sun === "medium") btu *= 1.1;
-  if (room.sun === "high") btu *= 1.2;
-
-  // Distance penalty
-  if (room.distance > 5) btu *= 1.05;
-
-  return Math.round(btu);
+  } catch (err) {
+    alert("Calculation failed: " + err.message);
+  }
 }
 
-function calculate() {
-  if (rooms.length === 0) return alert("Add at least one room");
-
-  let totalBTU = 0;
-  rooms.forEach(r => totalBTU += calculateRoomBTU(r));
-
-  let system = "Single Split";
-  if (rooms.length > 1 && totalBTU > 24000) system = "Multi Split";
-  if (totalBTU > 36000) system = "VRF System";
-
-  lastCalculation = { totalBTU, system };
-
-  el("summary").classList.remove("hidden");
-  el("summary").innerHTML = `
-    <h3>System Recommendation</h3>
-    <p><strong>${system}</strong></p>
-    <h3>Total Capacity</h3>
-    <p><strong>${totalBTU} BTU</strong></p>
-  `;
-}
-
-/* ================= SAVE / LOAD ================= */
-
+// ================= SAVE PROJECT =================
 async function saveProject() {
-  if (!window.lastCalculation) return alert("Calculate first!");
-
-  const projectName = document.getElementById("projectName").value || "Untitled Project";
+  if (!lastCalculation) return alert("Calculate first!");
+  if (!token) return alert("You must login first!");
 
   try {
     const res = await fetch("https://ac-calculator-backend.onrender.com/project/save", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`  // <--- make sure token is here
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
-        projectName,
+        projectName: el("projectName").value || "Untitled Project",
         rooms,
-        totalBTU: window.lastCalculation.totalBTU,
-        totalMaterials: window.lastCalculation.totalMaterials,
-        systemRecommendation: window.lastCalculation.systemRecommendation
+        totalBTU: lastCalculation.totalBTU,
+        totalMaterials: lastCalculation.totalMaterials,
+        systemRecommendation: lastCalculation.systemRecommendation
       })
     });
 
@@ -171,7 +236,36 @@ async function saveProject() {
   }
 }
 
+// ================= LOAD PROJECTS =================
+async function loadSavedProjects() {
+  if (!el("savedProjects")) return;
+  if (!token) return;
 
-/* ================= INIT ================= */
+  try {
+    const res = await fetch("https://ac-calculator-backend.onrender.com/project/list", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const projects = await res.json();
+    const t = translations[language];
 
+    el("savedProjects").innerHTML = projects.map(p => `
+      <div class="card">
+        <h4>${p.projectName}</h4>
+        <p>${t.totalBTU}: ${p.totalBTU}</p>
+        <p>${t.system}: ${p.systemRecommendation}</p>
+        <button onclick="exportPDF('${p._id}')">${t.export}</button>
+      </div>
+    `).join("");
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// ================= EXPORT PDF =================
+function exportPDF(id) {
+  if (!id) return alert("Project ID missing");
+  window.open(`https://ac-calculator-backend.onrender.com/project/export/${id}?token=${token}`);
+}
+
+// ================= INIT =================
 if (token) loadSavedProjects();
