@@ -2,37 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Installer Dashboard</title>
+  <title>AC Installer Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header class="topbar">
-  <h2>AC Installer Dashboard</h2>
-  <button id="logoutBtn" class="logout">Logout</button>
-</header>
+  <div class="container">
 
-<div class="container">
-  <input id="projectName" placeholder="Project Name" />
+    <!-- ===== HEADER ===== -->
+    <div class="header">
+      <h2 id="title">AC Installer Dashboard</h2>
+      <button id="logoutBtn">Logout</button>
+    </div>
 
-  <button onclick="newProject()">➕ New Project</button>
-  <button onclick="addRoom()">Add Room</button>
-  <button onclick="calculate()">Calculate</button>
+    <!-- ===== PROJECT NAME ===== -->
+    <div class="card">
+      <input id="projectName" placeholder="Project Name" />
+    </div>
 
-  <div id="rooms"></div>
+    <!-- ===== ROOMS ===== -->
+    <div id="rooms"></div>
 
-  <div id="summary" class="hidden">
-    <h3>Total Capacity</h3>
-    <p id="totalKw"></p>
-    <button id="saveProjectBtn" onclick="saveProject()">💾 Save Project</button>
-    <button onclick="exportPDF()">📄 Export PDF</button>
+    <!-- ===== ACTION BUTTONS ===== -->
+    <div class="actions">
+      <button onclick="addRoom()">➕ Add Room</button>
+      <button onclick="calculate()">📊 Calculate</button>
+      <button class="success" onclick="saveProject()">💾 Save Project</button>
+    </div>
+
+    <!-- ===== SUMMARY ===== -->
+    <div id="summary" class="hidden">
+      <h3>Total Capacity</h3>
+      <p id="totalKw"></p>
+    </div>
+
+    <!-- ===== SAVED PROJECTS ===== -->
+    <h3 style="margin-top:24px;">Saved Projects</h3>
+    <div id="savedProjects"></div>
+
   </div>
 
-  <h3>Saved Projects</h3>
-  <div id="savedProjects"></div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
