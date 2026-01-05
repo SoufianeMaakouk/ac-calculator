@@ -2,47 +2,94 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AC Installer Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AC Installer Dashboard</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ===== Reset & Basic Styling ===== */
+    * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
+    body { background: #f5f6fa; color: #333; }
+    h2,h3,h4,p { margin-bottom: 8px; }
+
+    /* ===== Top Bar ===== */
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #1e90ff; color: white; padding: 1rem; flex-wrap: wrap;
+    }
+    .topbar h2 { font-size: 1.5rem; }
+    .topbar button, .topbar select { padding: 0.5rem 1rem; border:none; border-radius:5px; cursor:pointer; }
+    .topbar select { margin-left: 1rem; }
+
+    /* ===== Container ===== */
+    .container {
+      max-width: 1200px; margin: 2rem auto; padding: 1rem;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    input, select, button { padding: 0.5rem; margin-bottom: 0.5rem; border-radius:5px; border:1px solid #ccc; width: 100%; }
+    button { background: #1e90ff; color:white; font-weight:bold; border:none; cursor:pointer; }
+    button:hover { background: #1c86ee; }
+
+    /* ===== Rooms ===== */
+    .room { background:white; padding:1rem; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:1rem; display: flex; flex-wrap: wrap; gap:0.5rem; align-items: center; }
+    .room input, .room select { flex:1; min-width: 120px; }
+
+    /* ===== Summary ===== */
+    #summary { background:#e3f2fd; padding:1rem; border-radius:8px; display:flex; flex-direction: column; gap:0.5rem; }
+    #summary button { width: auto; }
+
+    /* ===== Saved Projects ===== */
+    #savedProjects { display:flex; flex-wrap: wrap; gap:1rem; }
+    .card { background:white; padding:1rem; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); flex:1 1 200px; }
+
+    /* ===== Responsive ===== */
+    @media(max-width:768px) {
+      .topbar { flex-direction: column; align-items: flex-start; gap:0.5rem; }
+      .room { flex-direction: column; }
+      input, select, button { width: 100%; }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="container">
+<header class="topbar">
+  <h2 id="title">AC Installer Dashboard</h2>
+  <div>
+    <select id="languageSelect">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="ar">العربية</option>
+    </select>
+    <button id="logoutBtn"></button>
+  </div>
+</header>
 
-    <!-- ===== HEADER ===== -->
-    <div class="header">
-      <h2 id="title">AC Installer Dashboard</h2>
-      <button id="logoutBtn">Logout</button>
-    </div>
+<div class="container">
+  <input id="projectName" placeholder="Project Name" />
 
-    <!-- ===== PROJECT NAME ===== -->
-    <div class="card">
-      <input id="projectName" placeholder="Project Name" />
-    </div>
-
-    <!-- ===== ROOMS ===== -->
-    <div id="rooms"></div>
-
-    <!-- ===== ACTION BUTTONS ===== -->
-    <div class="actions">
-      <button onclick="addRoom()">➕ Add Room</button>
-      <button onclick="calculate()">📊 Calculate</button>
-      <button class="success" onclick="saveProject()">💾 Save Project</button>
-    </div>
-
-    <!-- ===== SUMMARY ===== -->
-    <div id="summary" class="hidden">
-      <h3>Total Capacity</h3>
-      <p id="totalKw"></p>
-    </div>
-
-    <!-- ===== SAVED PROJECTS ===== -->
-    <h3 style="margin-top:24px;">Saved Projects</h3>
-    <div id="savedProjects"></div>
-
+  <div style="display:flex; gap:0.5rem; flex-wrap: wrap;">
+    <button id="newProjectBtn" onclick="newProject()">➕ New Project</button>
+    <button id="addRoomBtn" onclick="addRoom()">Add Room</button>
+    <button id="calculateBtn" onclick="calculate()">Calculate</button>
   </div>
 
-  <script src="script.js"></script>
+  <div id="rooms"></div>
+
+  <div id="summary" class="hidden"></div>
+
+  <h3 id="savedTitle">Saved Projects</h3>
+  <div id="savedProjects"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  // ===== New Project =====
+  function newProject() {
+    rooms = [];
+    lastCalculation = null;
+    el("projectName").value = "";
+    el("summary").classList.add("hidden");
+    renderRooms();
+  }
+</script>
 </body>
 </html>
