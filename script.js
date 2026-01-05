@@ -1,6 +1,7 @@
-let token = localStorage.getItem("token");
+let token = localStorage.getItem("token") || null;
 let rooms = [];
 let language = "en";
+let lastCalculation = null;
 
 /* ================= TRANSLATIONS ================= */
 
@@ -90,9 +91,7 @@ const translations = {
 
 /* ================= HELPERS ================= */
 
-function el(id) {
-  return document.getElementById(id);
-}
+const el = id => document.getElementById(id);
 
 function translateUI() {
   const t = translations[language];
@@ -112,12 +111,11 @@ function translateUI() {
 /* ================= LANGUAGE ================= */
 
 if (el("languageSelect")) {
-  el("languageSelect").addEventListener("change", e => {
+  el("languageSelect").onchange = e => {
     language = e.target.value;
     translateUI();
-  });
+  };
 }
-
 translateUI();
 
 /* ================= AUTH ================= */
@@ -136,10 +134,14 @@ async function login() {
   });
 
   const data = await res.json();
+
   if (data.token) {
-    localStorage.setItem("token", data.token);
+    token = data.token;                // ✅ FIX
+    localStorage.setItem("token", token);
     location.href = "dashboard.html";
-  } else alert(data.message);
+  } else {
+    alert(data.message || "Login failed");
+  }
 }
 
 async function register() {
@@ -156,7 +158,7 @@ async function register() {
   alert(data.message);
 }
 
-/* ================= DASHBOARD ================= */
+/* ================= ROOMS ================= */
 
 if (el("addRoomBtn")) el("addRoomBtn").onclick = addRoom;
 if (el("calculateBtn")) el("calculateBtn").onclick = calculate;
@@ -173,8 +175,8 @@ function addRoom() {
   renderRooms();
 }
 
-function removeRoom(index) {
-  rooms.splice(index, 1);
+function removeRoom(i) {
+  rooms.splice(i, 1);
   renderRooms();
 }
 
@@ -187,22 +189,19 @@ function renderRooms() {
     el("rooms").innerHTML += `
       <div class="room">
         <h4>${t.addRoom} ${i + 1}</h4>
-        <input type="number" value="${r.area}" placeholder="${t.area}"
-          onchange="rooms[${i}].area=this.valueAsNumber">
-        <input type="number" value="${r.ceilingHeight}" placeholder="${t.ceiling}"
-          onchange="rooms[${i}].ceilingHeight=this.valueAsNumber">
+        <input type="number" value="${r.area}" onchange="rooms[${i}].area=this.valueAsNumber">
+        <input type="number" value="${r.ceilingHeight}" onchange="rooms[${i}].ceilingHeight=this.valueAsNumber">
         <select onchange="rooms[${i}].type=this.value">
-          <option value="bedroom">${t.bedroom}</option>
-          <option value="living">${t.living}</option>
-          <option value="kitchen">${t.kitchen}</option>
+          <option value="bedroom" ${r.type === "bedroom" ? "selected" : ""}>${t.bedroom}</option>
+          <option value="living" ${r.type === "living" ? "selected" : ""}>${t.living}</option>
+          <option value="kitchen" ${r.type === "kitchen" ? "selected" : ""}>${t.kitchen}</option>
         </select>
         <select onchange="rooms[${i}].sun=this.value">
-          <option value="low">${t.low}</option>
-          <option value="medium">${t.medium}</option>
-          <option value="high">${t.high}</option>
+          <option value="low" ${r.sun === "low" ? "selected" : ""}>${t.low}</option>
+          <option value="medium" ${r.sun === "medium" ? "selected" : ""}>${t.medium}</option>
+          <option value="high" ${r.sun === "high" ? "selected" : ""}>${t.high}</option>
         </select>
-        <input type="number" value="${r.distance}" placeholder="${t.distance}"
-          onchange="rooms[${i}].distance=this.valueAsNumber">
+        <input type="number" value="${r.distance}" onchange="rooms[${i}].distance=this.valueAsNumber">
         <button onclick="removeRoom(${i})">${t.remove}</button>
       </div>
     `;
@@ -214,59 +213,4 @@ function renderRooms() {
 async function calculate() {
   const res = await fetch("https://ac-calculator-backend.onrender.com/project/calculate", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ rooms })
-  });
-
-  window.lastCalculation = await res.json();
-  el("summary").classList.remove("hidden");
-
-  el("summary").innerHTML = `
-    <h3>${translations[language].system}: ${lastCalculation.systemRecommendation}</h3>
-    <h3>${translations[language].totalBTU}: ${lastCalculation.totalBTU}</h3>
-  `;
-}
-
-/* ================= SAVE & LOAD ================= */
-
-async function saveProject() {
-  if (!lastCalculation) return alert("Calculate first!");
-
-  await fetch("https://ac-calculator-backend.onrender.com/project/save", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      projectName: el("projectName").value || "Untitled",
-      rooms,
-      ...lastCalculation
-    })
-  });
-
-  loadSavedProjects();
-}
-
-async function loadSavedProjects() {
-  if (!el("savedProjects")) return;
-
-  const res = await fetch("https://ac-calculator-backend.onrender.com/project/list", {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  const projects = await res.json();
-  el("savedProjects").innerHTML = projects.map(p => `
-    <div class="card">
-      <h4>${p.projectName}</h4>
-      <p>${translations[language].totalBTU}: ${p.totalBTU}</p>
-      <button onclick="exportPDF('${p._id}')">${translations[language].export}</button>
-    </div>
-  `).join("");
-}
-
-function exportPDF(id) {
-  window.open(`https://ac-calculator-backend.onrender.com/project/export/${id}?token=${token}`);
-}
-
-if (token && el("savedProjects")) loadSavedProjects();
+    headers: { "Content-Type": "application/json
