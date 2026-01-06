@@ -3,106 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <title>AC Installer Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    /* ----- Basic Dashboard Styling ----- */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f6fa;
-      color: #333;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #1e90ff;
-      color: #fff;
-      padding: 1rem 2rem;
-    }
-    .topbar h2 { margin: 0; font-size: 1.5rem; }
-    .topbar button {
-      padding: 0.5rem 1rem;
-      background: #ff4757;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: white;
-      font-weight: bold;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-    input, select {
-      padding: 0.5rem;
-      margin: 0.5rem 0.25rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      margin: 0.5rem 0.25rem;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background: #1e90ff;
-      color: white;
-      font-weight: bold;
-    }
-    button:hover { background: #3742fa; }
-    #rooms .room {
-      background: #fff;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    #summary {
-      background: #fff;
-      padding: 1rem;
-      margin: 1rem 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    #savedProjects .card {
-      background: #fff;
-      padding: 1rem;
-      margin: 0.5rem 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .hidden { display: none; }
-    .language-select {
-      margin-left: 1rem;
-      padding: 0.3rem 0.5rem;
-      border-radius: 5px;
-      border: none;
-    }
-  </style>
 </head>
 <body>
 
 <header class="topbar">
   <h2 id="title">AC Installer Dashboard</h2>
-  <div>
-    <select id="languageSelect" class="language-select">
-      <option value="en">English</option>
-      <option value="fr">Français</option>
-      <option value="ar">العربية</option>
-    </select>
-    <button id="logoutBtn">Logout</button>
-  </div>
+
+  <select id="languageSelect">
+    <option value="en">EN</option>
+    <option value="fr">FR</option>
+    <option value="ar">AR</option>
+  </select>
+
+  <button id="logoutBtn">Logout</button>
 </header>
 
 <div class="container">
   <input id="projectName" placeholder="Project Name" />
 
-  <button id="newProjectBtn">➕ New Project</button>
-  <button id="addRoomBtn">Add Room</button>
+  <button id="addRoomBtn">➕ Add Room</button>
   <button id="calculateBtn">Calculate</button>
 
   <div id="rooms"></div>
